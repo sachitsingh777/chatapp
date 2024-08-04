@@ -48,3 +48,36 @@ export const get = query({
 });
 
 
+export const count=query({
+    args:{},
+    handler:async (ctx,args)=>{
+        const identity = await ctx.auth.getUserIdentity();
+
+        if (!identity) {
+            console.error("Unauthorized: No user identity found");
+            throw new Error("Unauthorized");
+        }
+
+        console.log(`User identity: ${JSON.stringify(identity)}`);
+
+        const currentUser = await getUserByClerkId({
+            ctx, clerkId: identity.subject
+        });
+
+        if (!currentUser) {
+            console.error(`User not found for Clerk ID: ${identity.subject}`);
+            throw new Error("User not found");
+        }
+
+        console.log(`Current user: ${JSON.stringify(currentUser)}`);
+
+        const requests = await ctx.db.query("requests")
+            .withIndex("by_receiver", q => q.eq("receiver", currentUser._id))
+            .collect();
+
+        console.log(`Requests found: ${requests.length}`);
+
+
+           return requests.length;
+    }
+})

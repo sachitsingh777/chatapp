@@ -1,9 +1,10 @@
 "use client"
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ui/theme/theme-toggle";
-import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNavigation } from "@/hooks/useNavigation"
 import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
@@ -30,7 +31,14 @@ const DesktopNav = () => {
                                             >
                                                 {path.icon}
                                             </Button>
+                                            {path.count?
+                                            <Badge
+                                            className="absolute left-6 bottom-7 px-2"
+                                            >{path.count}</Badge>:null}
                                         </TooltipTrigger>
+                                        <TooltipContent>
+                                            {path.name}
+                                        </TooltipContent>
                                     </Tooltip>
                                 </Link>
                             </li>
