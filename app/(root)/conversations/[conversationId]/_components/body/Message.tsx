@@ -12,10 +12,11 @@ type Props = {
     content:string[];
     createdAt:number;
     type:string;
+    seen?:React.ReactNode;
 }
 
 const Message = ({fromCurrentUser,senderImage,senderName,lastByUser
-    ,content,createdAt,type}: Props) => {
+    ,content,createdAt,type,seen}: Props) => {
 
     const formatTime=(timestamp:number)=>{
         return format(timestamp,"HH:mm")
@@ -37,7 +38,7 @@ const Message = ({fromCurrentUser,senderImage,senderName,lastByUser
         })}>
 
          {type=="text"?(
-            <p className='text-wrap break-words whitespace-pre-wrap'>{content}</p>
+            <p className='text-wrap break-words whitespace-pre-wrap break-all'>{content}</p>
          ):null}
 
          <p className={cn("text-xs flex w-full my-1 ",{
@@ -49,6 +50,7 @@ const Message = ({fromCurrentUser,senderImage,senderName,lastByUser
         
 
         </div>
+        {seen}
     </div>
     <Avatar className={cn("relative w-8 h-8",{
         "order-2":fromCurrentUser,

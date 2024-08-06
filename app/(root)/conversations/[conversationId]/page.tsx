@@ -9,6 +9,8 @@ import Header from './_components/Header'
 import Body from './_components/body/Body'
 import ChatInput from './_components/input/ChatInput'
 import RemoveFriendDialog from './_components/dialog/RemoveFriendDialog'
+import DeleteGroupDialog from './_components/dialog/DeleteGroupDialog'
+import LeaveGroupDialog from './_components/dialog/LeaveGroupDialog'
 
 type Props = {
   params: {
@@ -18,57 +20,72 @@ type Props = {
 
 const ConversationPage = ({ params }: Props) => {
   const conversation = useQuery(api.conversation.get, { id: params.conversationId });
-const [removeFriendDialogOpen,setRemoveFriendDialogOpen]=useState(false)
- 
-const [deleteGroupDialogOpen,setDeleteGroupDialogOpen]=useState(false)
+  const [removeFriendDialogOpen, setRemoveFriendDialogOpen] = useState(false)
 
-const [leaveGroupDialogOpen,setLeaveGroupDialogOpen]=useState(false)
-const [callType, setCallType] = useState<"audio" | "video"| null>(null)
-return (
+  const [deleteGroupDialogOpen, setDeleteGroupDialogOpen] = useState(false)
 
-     conversation===undefined?(
+  const [leaveGroupDialogOpen, setLeaveGroupDialogOpen] = useState(false)
+  const [callType, setCallType] = useState<"audio" | "video" | null>(null)
+  return (
+
+    conversation === undefined ? (
       <div className='w-full h-full flex items-center justify-center '>
-        <Loader2 className='h-8 w-8'  />
+        <Loader2 className='h-8 w-8' />
       </div>
-     ):conversation===null?(
+    ) : conversation === null ? (
       <p className='w-full h-full flex items-center justify-center'>Conversation not found</p>
-     ):(
-    <ConversationContainer>
-      <RemoveFriendDialog
-      conversationId={params.conversationId}
-      open={removeFriendDialogOpen}
-      setOpen={setRemoveFriendDialogOpen}
-      
-      />
+    ) : (
+      <ConversationContainer>
+        <RemoveFriendDialog
+          conversationId={params.conversationId}
+          open={removeFriendDialogOpen}
+          setOpen={setRemoveFriendDialogOpen}
+
+        />
+
+        <DeleteGroupDialog
+          conversationId={params.conversationId}
+          open={deleteGroupDialogOpen}
+          setOpen={setDeleteGroupDialogOpen}
+
+        />
+         <LeaveGroupDialog
+          conversationId={params.conversationId}
+          open={leaveGroupDialogOpen}
+          setOpen={setLeaveGroupDialogOpen}
+
+        />
 
 
 
-     <Header 
-     name={(conversation.isGroup?conversation.name:conversation.otherMember.username)||""}
-     imageUrl={(conversation.isGroup?undefined:conversation.otherMember.imageUrl)||""}
-      options={conversation.isGroup?[
-        {
-          label:"Leave group",
-          destructive:false,
-          onClick:()=>setLeaveGroupDialogOpen(true)
-        },
-        {
-          label:"Delete group",
-          destructive:true,
-          onClick:()=>setDeleteGroupDialogOpen(true)
-        }
+        <Header
+          name={(conversation.isGroup ? conversation.name : conversation.otherMember?.username) || ""}
+          imageUrl={(conversation.isGroup ? undefined : conversation.otherMember?.imageUrl) || ""}
+          options={conversation.isGroup ? [
+            {
+              label: "Leave group",
+              destructive: false,
+              onClick: () => setLeaveGroupDialogOpen(true)
+            },
+            {
+              label: "Delete group",
+              destructive: true,
+              onClick: () => setDeleteGroupDialogOpen(true)
+            }
 
-      ]:[
-        {
-          label:"Remove friend",
-          destructive:true,
-          onClick:()=>setRemoveFriendDialogOpen(true)
-        }
-      ]}
-   />
-    <Body/>
-    <ChatInput/>
-    </ConversationContainer>)
+          ] : [
+            {
+              label: "Remove friend",
+              destructive: true,
+              onClick: () => setRemoveFriendDialogOpen(true)
+            }
+          ]}
+        />
+        <Body
+        members={conversation.isGroup?conversation.otherMembers?conversation.otherMembers:[]:conversation.otherMember?[conversation.otherMember]:[]}
+        />
+        <ChatInput />
+      </ConversationContainer>)
   )
 }
 
